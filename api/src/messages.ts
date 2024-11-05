@@ -9,4 +9,5 @@ export const Messages = {
     `User with email ${email} already exists`,
   commonUserExistsByUsername: (username: string) =>
     `User with username ${username} already exists`,
+  commonPaymentNotFound: () => 'Payment not found',
 };
