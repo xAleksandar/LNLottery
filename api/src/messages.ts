@@ -10,4 +10,5 @@ export const Messages = {
   commonUserExistsByUsername: (username: string) =>
     `User with username ${username} already exists`,
   commonPaymentNotFound: () => 'Payment not found',
+  commonUserNotFound: () => 'User not found',
 };
