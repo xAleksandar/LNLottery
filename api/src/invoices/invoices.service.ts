@@ -14,16 +14,16 @@ import { User } from '../models/User.model';
 export class InvoicesService {
   constructor(
     @InjectModel(MongoModels.Payment)
-    private readonly paymentModel: Model<Payment>,
+    private readonly depositModel: Model<Payment>,
     @InjectModel(MongoModels.User) private readonly userModel: Model<User>,
   ) {}
 
-  async createInvoice(user: User) {
+  async createDepositInvoice(user: User) {
     const amount = 10; //TODO: Replace with user data when user call implemented
     const currentDate = new Date();
     const expiryDate =
       currentDate.getTime() + Number(process.env.LNBITS_INVOICE_EXPIRY);
-    const payment = new this.paymentModel({
+    const payment = new this.depositModel({
       user_id: user.id,
       amount,
       payment_hash: 'payment_hash',
@@ -55,7 +55,7 @@ export class InvoicesService {
   }
 
   async setPaid(invoiceId: string) {
-    const payment = await this.paymentModel.findById(invoiceId);
+    const payment = await this.depositModel.findById(invoiceId);
 
     if (!payment) {
       return new NotFoundException(Messages.commonPaymentNotFound());
@@ -70,7 +70,7 @@ export class InvoicesService {
     user.balance += payment.amount;
     await user.save();
 
-    payment.status = PaymentStatus.PAID;
+    payment.status = PaymentStatus.COMPLETED;
     const result = await payment.save();
 
     return result;

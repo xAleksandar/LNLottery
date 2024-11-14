@@ -9,10 +9,10 @@ import { User } from '../models/User.model';
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
-  @Post(invoiceRoutes.createNewInvoice)
+  @Post(invoiceRoutes.createDepositInvoice)
   @UseGuards(JwtAuthGuard)
-  async createInvoice(@GetUser() user: User) {
-    return await this.invoicesService.createInvoice(user);
+  async createDepositInvoice(@GetUser() user: User) {
+    return await this.invoicesService.createDepositInvoice(user);
   }
 
   @Post(invoiceRoutes.setPaidId)

@@ -1,6 +1,6 @@
 export const invoiceRoutes = {
   main: 'invoices',
-  createNewInvoice: '/create-new-invoice',
+  createDepositInvoice: '/create-deposit-invoice',
   setPaid: '/setpaid',
   setPaidId: '/setpaid/:id',
 };

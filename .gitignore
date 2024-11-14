@@ -5,3 +5,7 @@ api/node_modules
 .env
 api/.env
 ./api/.env
+
+dist
+api/dist
+./api/dist
