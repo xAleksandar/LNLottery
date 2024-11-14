@@ -1,4 +1,4 @@
 export const MongoModels = {
   User: 'User',
-  Payment: 'Payment',
+  Deposit: 'Deposit',
 };

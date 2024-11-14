@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { LNBitsHeaders } from './LNBits.headers';
 import { CREATE_INVOICE_URL } from './LNBits.urls';
-import { Payment } from '../../models/Payment.model';
+import { Deposit } from '../../models/Deposit.model';
 
-export const makePayment = async (
+export const makeDeposit = async (
   amount: number,
   memo: string,
   expiry: number,
@@ -15,8 +15,8 @@ export const makePayment = async (
       { out: false, amount, memo, expiry, webhook },
       LNBitsHeaders,
     );
-    return response.data as Payment;
+    return response.data as Deposit;
   } catch (error) {
-    console.error('Error making payment:', error);
+    console.error('Error making deposit: ', error);
   }
 };

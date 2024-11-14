@@ -4,12 +4,12 @@ import { InvoicesService } from './invoices.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../models/User.model';
 import { MongoModels } from '../models/models.enum';
-import { PaymentSchema } from '../models/Payment.model';
+import { DepositSchema } from '../models/Deposit.model';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: MongoModels.Payment, schema: PaymentSchema },
+      { name: MongoModels.Deposit, schema: DepositSchema },
       { name: MongoModels.User, schema: UserSchema },
     ]),
   ],

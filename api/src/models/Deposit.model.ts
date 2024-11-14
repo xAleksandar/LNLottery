@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { PaymentStatus } from 'src/enums/payments.enum';
 
-export const PaymentSchema = new mongoose.Schema({
+export const DepositSchema = new mongoose.Schema({
   user_id: { type: String, required: true },
   amount: { type: Number, required: true },
   payment_hash: { type: String, required: true },
@@ -12,7 +12,7 @@ export const PaymentSchema = new mongoose.Schema({
   status: { type: String, required: true },
 });
 
-export interface Payment {
+export interface Deposit {
   id: string;
   user_id: string;
   amount: number;

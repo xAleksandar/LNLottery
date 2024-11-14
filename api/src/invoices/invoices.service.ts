@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { makePayment } from '../services/LNBits/LNBits.service';
+import { makeDeposit } from '../services/LNBits/LNBits.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Messages } from 'src/messages';
-import { Payment } from '../models/Payment.model';
+import { Deposit } from '../models/Deposit.model';
 import { MongoModels } from '../models/models.enum';
 import { invoiceRoutes } from 'src/routes/invoices.routes';
 import { getInvoiceDate } from 'src/helpers/date.helpers';
@@ -13,8 +13,8 @@ import { User } from '../models/User.model';
 @Injectable()
 export class InvoicesService {
   constructor(
-    @InjectModel(MongoModels.Payment)
-    private readonly depositModel: Model<Payment>,
+    @InjectModel(MongoModels.Deposit)
+    private readonly depositModel: Model<Deposit>,
     @InjectModel(MongoModels.User) private readonly userModel: Model<User>,
   ) {}
 
@@ -23,7 +23,7 @@ export class InvoicesService {
     const currentDate = new Date();
     const expiryDate =
       currentDate.getTime() + Number(process.env.LNBITS_INVOICE_EXPIRY);
-    const payment = new this.depositModel({
+    const deposit = new this.depositModel({
       user_id: user.id,
       amount,
       payment_hash: 'payment_hash',
@@ -34,44 +34,47 @@ export class InvoicesService {
       status: PaymentStatus.CREATED,
     });
 
-    const paymentMemo = `${getInvoiceDate(currentDate)} || ${user.username} || ${amount} sats`;
+    const memo = `${getInvoiceDate(currentDate)} || ${user.username} || ${amount} sats`;
 
-    const request = await makePayment(
+    const request = await makeDeposit(
       amount,
-      paymentMemo,
+      memo,
       expiryDate,
-      `${process.env.SERVER_BASE_URL}/${invoiceRoutes.main}${invoiceRoutes.setPaid}/${payment.id}`,
+      `${process.env.SERVER_WEBHOOK_URL}/${invoiceRoutes.main}${invoiceRoutes.setPaid}/${deposit.id}`,
     );
 
-    payment.payment_hash = request.payment_hash;
-    payment.payment_request = request.payment_request;
-    payment.lnurl_response = request.lnurl_response;
-    payment.checking_id = request.checking_id;
-    payment.status = PaymentStatus.PENDING;
+    console.log(
+      `${process.env.SERVER_WEBHOOK_URL}/${invoiceRoutes.main}${invoiceRoutes.setPaid}/${deposit.id}`,
+    );
 
-    const result = await payment.save();
+    deposit.payment_hash = request.payment_hash;
+    deposit.payment_request = request.payment_request;
+    deposit.lnurl_response = request.lnurl_response;
+    deposit.checking_id = request.checking_id;
+    deposit.status = PaymentStatus.PENDING;
+
+    const result = await deposit.save();
 
     return result;
   }
 
   async setPaid(invoiceId: string) {
-    const payment = await this.depositModel.findById(invoiceId);
-
-    if (!payment) {
-      return new NotFoundException(Messages.commonPaymentNotFound());
+    const deposit = await this.depositModel.findById(invoiceId);
+    if (!deposit) {
+      return new NotFoundException(Messages.commonDepositNotFound());
     }
 
-    const user = await this.userModel.findById(payment.user_id);
+    const user = await this.userModel.findById(deposit.user_id);
 
     if (!user) {
       return new NotFoundException(Messages.commonUserNotFound());
     }
 
-    user.balance += payment.amount;
+    user.balance += deposit.amount;
     await user.save();
 
-    payment.status = PaymentStatus.COMPLETED;
-    const result = await payment.save();
+    deposit.status = PaymentStatus.COMPLETED;
+    const result = await deposit.save();
 
     return result;
   }
