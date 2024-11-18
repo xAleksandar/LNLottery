@@ -1,4 +1,5 @@
-import { Controller, Post, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Param, UseGuards, Body } from '@nestjs/common';
+import { WithdrawalRequest, DepositRequest } from 'src/types/requests';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { InvoicesService } from './invoices.service';
 import { invoiceRoutes } from 'src/routes/invoices.routes';
@@ -11,8 +12,21 @@ export class InvoicesController {
 
   @Post(invoiceRoutes.createDepositInvoice)
   @UseGuards(JwtAuthGuard)
-  async createDepositInvoice(@GetUser() user: User) {
-    return await this.invoicesService.createDepositInvoice(user);
+  async createDepositInvoice(
+    @GetUser() user: User,
+    @Body() data: DepositRequest,
+  ) {
+    const { amount } = data;
+    return await this.invoicesService.createDepositInvoice(user, amount);
+  }
+
+  @Post(invoiceRoutes.createWithdrawalInvoice)
+  @UseGuards(JwtAuthGuard)
+  async createWithdrawalInvoice(
+    @GetUser() user: User,
+    @Body() data: WithdrawalRequest,
+  ) {
+    return await this.invoicesService.createWithdrawalInvoice(user.id, data);
   }
 
   @Post(invoiceRoutes.setPaidId)

@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../models/User.model';
 import { MongoModels } from '../models/models.enum';
 import { DepositSchema } from '../models/Deposit.model';
+import { WithdrawalSchema } from 'src/models/Withdrawal.model';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: MongoModels.Deposit, schema: DepositSchema },
       { name: MongoModels.User, schema: UserSchema },
+      { name: MongoModels.Deposit, schema: DepositSchema },
+      { name: MongoModels.Withdrawal, schema: WithdrawalSchema },
     ]),
   ],
   controllers: [InvoicesController],

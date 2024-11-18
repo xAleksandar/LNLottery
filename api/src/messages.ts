@@ -11,4 +11,5 @@ export const Messages = {
     `User with username ${username} already exists`,
   commonDepositNotFound: () => 'Deposit not found',
   commonUserNotFound: () => 'User not found',
+  commonInsufficientFunds: () => 'Insufficient funds',
 };

@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { makeDeposit } from '../services/LNBits/LNBits.service';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { makeDeposit, makeWithdrawal } from '../services/LNBits/LNBits.service';
+import { WithdrawalRequest } from 'src/types/requests';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Messages } from 'src/messages';
@@ -7,6 +12,7 @@ import { Deposit } from '../models/Deposit.model';
 import { MongoModels } from '../models/models.enum';
 import { invoiceRoutes } from 'src/routes/invoices.routes';
 import { getInvoiceDate } from 'src/helpers/date.helpers';
+import { Withdrawal } from 'src/models/Withdrawal.model';
 import { PaymentStatus } from 'src/enums/payments.enum';
 import { User } from '../models/User.model';
 
@@ -16,10 +22,11 @@ export class InvoicesService {
     @InjectModel(MongoModels.Deposit)
     private readonly depositModel: Model<Deposit>,
     @InjectModel(MongoModels.User) private readonly userModel: Model<User>,
+    @InjectModel(MongoModels.Withdrawal)
+    private readonly withdrawalModel: Model<Withdrawal>,
   ) {}
 
-  async createDepositInvoice(user: User) {
-    const amount = 10; //TODO: Replace with user data when user call implemented
+  async createDepositInvoice(user: User, amount: number) {
     const currentDate = new Date();
     const expiryDate =
       currentDate.getTime() + Number(process.env.LNBITS_INVOICE_EXPIRY);
@@ -43,10 +50,6 @@ export class InvoicesService {
       `${process.env.SERVER_WEBHOOK_URL}/${invoiceRoutes.main}${invoiceRoutes.setPaid}/${deposit.id}`,
     );
 
-    console.log(
-      `${process.env.SERVER_WEBHOOK_URL}/${invoiceRoutes.main}${invoiceRoutes.setPaid}/${deposit.id}`,
-    );
-
     deposit.payment_hash = request.payment_hash;
     deposit.payment_request = request.payment_request;
     deposit.lnurl_response = request.lnurl_response;
@@ -58,23 +61,67 @@ export class InvoicesService {
     return result;
   }
 
+  async createWithdrawalInvoice(userId: string, data: WithdrawalRequest) {
+    const { amount } = data;
+    const isManual = data.isManual ?? false;
+
+    const user = await this.userModel.findById(userId);
+    const userBalance = user.balance;
+
+    if (userBalance < amount) {
+      return new BadRequestException(Messages.commonInsufficientFunds());
+    }
+
+    const currentDate = new Date();
+    const memo = `${getInvoiceDate(currentDate)} || ${user.username} || ${amount} sats`;
+    const withdrawal = new this.withdrawalModel({
+      memo,
+      user_id: user.id,
+      amount,
+      isManual,
+      created_at: currentDate,
+      lnurl: 'lnurl',
+      status: PaymentStatus.CREATED,
+    });
+
+    const request = await makeWithdrawal(
+      memo,
+      amount,
+      `${process.env.SERVER_WEBHOOK_URL}/${invoiceRoutes.main}${invoiceRoutes.setPaid}/${withdrawal.id}`,
+    );
+
+    if (request) {
+      withdrawal.status = PaymentStatus.PENDING;
+    }
+
+    await withdrawal.save();
+
+    return request;
+  }
+
   async setPaid(invoiceId: string) {
     const deposit = await this.depositModel.findById(invoiceId);
-    if (!deposit) {
+    const withdrawal = await this.withdrawalModel.findById(invoiceId);
+
+    if (!deposit && !withdrawal) {
       return new NotFoundException(Messages.commonDepositNotFound());
     }
 
-    const user = await this.userModel.findById(deposit.user_id);
+    const action = deposit ?? withdrawal;
+
+    const user = await this.userModel.findById(action.user_id);
 
     if (!user) {
       return new NotFoundException(Messages.commonUserNotFound());
     }
 
-    user.balance += deposit.amount;
+    user.balance = deposit
+      ? user.balance + deposit.amount
+      : user.balance - withdrawal.amount;
     await user.save();
 
-    deposit.status = PaymentStatus.COMPLETED;
-    const result = await deposit.save();
+    action.status = PaymentStatus.COMPLETED;
+    const result = await action.save();
 
     return result;
   }
