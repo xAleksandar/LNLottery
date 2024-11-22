@@ -12,4 +12,6 @@ export const Messages = {
   commonDepositNotFound: () => 'Deposit not found',
   commonUserNotFound: () => 'User not found',
   commonInsufficientFunds: () => 'Insufficient funds',
+  commonLoginSuccess: () => 'Login successful',
+  commonTokenActive: () => 'Token is active',
 };

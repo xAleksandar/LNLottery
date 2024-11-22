@@ -33,17 +33,6 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async validateRefreshToken(refreshToken: string) {
-    try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
-      return payload;
-    } catch (error) {
-      return null;
-    }
-  }
-
   async validateUser(payload: AuthPayloadDto) {
     const { email, auth_identifier } = payload;
     const user = await this.userModel.findOne({ email }).exec();

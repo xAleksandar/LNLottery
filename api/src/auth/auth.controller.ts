@@ -1,18 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Req,
-  UseGuards,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { TokensTypeEnum } from 'src/enums/tokens.enum';
 import { LocalGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
-import { AuthService } from './auth.service';
 import { authPaths } from './paths/auth.paths';
-import { Request } from 'express';
-import { Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { Request, Response } from 'express';
 import { User } from '../models/User.model';
+import { Messages } from '../messages';
 
 @Controller(authPaths.main)
 export class AuthController {
@@ -20,26 +14,31 @@ export class AuthController {
 
   @Post(authPaths.login)
   @UseGuards(LocalGuard)
-  async login(@Req() req: Request) {
-    const user = req.user as User;
+  async login(@Req() request: Request, @Res() response: Response) {
+    const user = request.user as User;
     const tokens = await this.authService.generateInitialTokens(user);
-    return tokens;
-  }
 
-  @Post(authPaths.refreshToken)
-  @HttpCode(HttpStatus.OK)
-  async refreshToken(@Body('refreshToken') refreshToken: string) {
-    const payload = await this.authService.validateRefreshToken(refreshToken);
-    if (!payload) {
-      throw new UnauthorizedException('Invalid or expired refresh token');
-    }
-    const accessToken = await this.authService.generateAccessToken(payload);
-    return { accessToken };
+    console.log(Number(process.env.ACCESS_TOKEN_EXPIRY));
+    response.cookie(TokensTypeEnum.AccessToken, tokens.accessToken, {
+      maxAge: Number(process.env.ACCESS_TOKEN_EXPIRY),
+      httpOnly: true,
+      secure: true,
+    });
+
+    response.cookie(TokensTypeEnum.RefreshToken, tokens.refreshToken, {
+      maxAge: Number(process.env.REFRESH_TOKEN_EXPIRY),
+      httpOnly: true,
+      secure: true,
+    });
+
+    return response
+      .status(200)
+      .json({ message: Messages.commonLoginSuccess() });
   }
 
   @Get(authPaths.status)
   @UseGuards(JwtAuthGuard)
-  status(@Req() req: Request) {
-    return req.user;
+  status(@Res() response: Response) {
+    return response.status(200).json({ message: Messages.commonTokenActive() });
   }
 }
