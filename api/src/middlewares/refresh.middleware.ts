@@ -15,18 +15,21 @@ export class RefreshTokenMiddleware implements NestMiddleware {
         const token = jwt.verify(
           refreshToken,
           process.env.JWT_REFRESH_SECRET,
-        ) as { username: string; id: string };
-        const payload = { username: token.username, id: token.id };
-        const newAccessToken = jwtService.sign(payload, {
-          secret: process.env.JWT_SECRET,
-          expiresIn: process.env.JWT_EXPIRY,
-        });
-        request.cookies.accessToken = newAccessToken;
-        response.cookie(TokensTypeEnum.AccessToken, newAccessToken, {
-          maxAge: Number(process.env.ACCESS_TOKEN_EXPIRY),
-          httpOnly: true,
-          secure: true,
-        });
+        ) as { username: string; id: string; exp: number };
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (token.exp > currentTime) {
+          const payload = { username: token.username, id: token.id };
+          const newAccessToken = jwtService.sign(payload, {
+            secret: process.env.JWT_SECRET,
+            expiresIn: process.env.JWT_EXPIRY,
+          });
+          request.cookies.accessToken = newAccessToken;
+          response.cookie(TokensTypeEnum.AccessToken, newAccessToken, {
+            maxAge: Number(process.env.ACCESS_TOKEN_EXPIRY),
+            httpOnly: true,
+            secure: true,
+          });
+        }
       } catch (error) {}
     }
 

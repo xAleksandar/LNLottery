@@ -18,6 +18,8 @@ export class AuthController {
     const user = request.user as User;
     const tokens = await this.authService.generateInitialTokens(user);
 
+    console.log(tokens);
+
     console.log(Number(process.env.ACCESS_TOKEN_EXPIRY));
     response.cookie(TokensTypeEnum.AccessToken, tokens.accessToken, {
       maxAge: Number(process.env.ACCESS_TOKEN_EXPIRY),
