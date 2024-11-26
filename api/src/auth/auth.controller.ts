@@ -6,7 +6,7 @@ import { authPaths } from './paths/auth.paths';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { User } from '../models/User.model';
-import { Messages } from '../messages';
+import { Messages } from '../../../constants/messages';
 
 @Controller(authPaths.main)
 export class AuthController {

@@ -5,8 +5,8 @@ export const Messages = {
     `User with ID ${userId} not found`,
   commonUserNotFoundByEmail: (email: string) =>
     `User with email ${email} not found`,
-  commonUserExistsByEmail: (email: string) =>
-    `User with email ${email} already exists`,
+  commonUserExistsByEmail: () =>
+    `This email is already taken`,
   commonUserExistsByUsername: (username: string) =>
     `User with username ${username} already exists`,
   commonDepositNotFound: () => 'Deposit not found',

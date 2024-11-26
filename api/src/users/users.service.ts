@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../models/User.model';
 import { Model } from 'mongoose';
-import { Messages } from '../messages';
+import { Messages } from '../../../constants/messages';
 import { MONGO_ID_LENGTH } from 'src/constants';
 import { MongoModels } from 'src/models/models.enum';
 import { encryptPassword } from 'src/helpers/password.helpers';
@@ -21,7 +21,7 @@ export class UsersService {
   ): Promise<string> {
     const user = await this.userModel.findOne({ email }).exec();
     if (user) {
-      throw new BadRequestException(Messages.commonUserExistsByEmail(email));
+      throw new BadRequestException(Messages.commonUserExistsByEmail());
     }
 
     const userByUsername = await this.userModel.findOne({ username }).exec();

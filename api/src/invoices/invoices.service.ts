@@ -7,7 +7,7 @@ import { makeDeposit, makeWithdrawal } from '../services/LNBits/LNBits.service';
 import { WithdrawalRequest } from 'src/types/requests';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Messages } from 'src/messages';
+import { Messages } from '../../../constants/messages';
 import { Deposit } from '../models/Deposit.model';
 import { MongoModels } from '../models/models.enum';
 import { invoiceRoutes } from 'src/routes/invoices.routes';
