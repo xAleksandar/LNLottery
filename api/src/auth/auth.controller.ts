@@ -18,9 +18,6 @@ export class AuthController {
     const user = request.user as User;
     const tokens = await this.authService.generateInitialTokens(user);
 
-    console.log(tokens);
-
-    console.log(Number(process.env.ACCESS_TOKEN_EXPIRY));
     response.cookie(TokensTypeEnum.AccessToken, tokens.accessToken, {
       maxAge: Number(process.env.ACCESS_TOKEN_EXPIRY),
       httpOnly: true,
@@ -36,6 +33,24 @@ export class AuthController {
     return response
       .status(200)
       .json({ message: Messages.commonLoginSuccess() });
+  }
+
+  @Post(authPaths.logout)
+  @UseGuards(JwtAuthGuard)
+  async logout(@Res() response: Response) {
+    response.clearCookie(TokensTypeEnum.AccessToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    response.clearCookie(TokensTypeEnum.RefreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return response
+      .status(200)
+      .json({ message: Messages.commonLogoutSuccess() });
   }
 
   @Get(authPaths.status)
