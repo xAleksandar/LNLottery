@@ -1,0 +1,7 @@
+body {
+  background: transparent url("../assets/background/background.png") 0% 0%
+    no-repeat padding-box;
+  background-attachment: fixed;
+  background-size: cover;
+  margin: 0px;
+}

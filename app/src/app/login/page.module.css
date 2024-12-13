@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .wrapperContent {
+    padding: 20px;
+    background-color: #3bb0ff1a;
+    border: 1px solid #3bb0ff26;
+    border-radius: 16px;
+    color: white;
+
+    .title {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .messageWrapper {
+      text-align: center;
+
+      .error {
+        color: #ff4d4d;
+      }
+
+      .success {
+        color: #33ff77;
+      }
+    }
+
+    .submit {
+      width: 100%;
+      background-color: #3bb0ff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .submit:hover {
+      background-color: #3bb0ffcc;
+    }
+
+    .midline {
+      display: flex;
+
+      .line {
+        width: 100%;
+        height: 2px;
+        background-color: white;
+        margin-top: 24px;
+      }
+
+      .text {
+        padding: 16px 8px;
+      }
+    }
+  }
+
+  .registerLink {
+    color: #3bb0ff;
+  }
+}

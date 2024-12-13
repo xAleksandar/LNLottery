@@ -1,0 +1,57 @@
+.wrapper {
+  color: white;
+}
+
+.wrapperModal {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  justify-content: center; /* Center horizontally */
+  align-items: flex-start; /* Align to the top */
+
+  .content {
+    padding: 20px;
+    background-color: #3bb0ff1a;
+    border: 1px solid #3bb0ff26;
+    border-radius: 16px;
+
+    .submit {
+      width: 100%;
+      background-color: #3bb0ff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .submit:hover {
+      background-color: #3bb0ffcc;
+    }
+
+    .paymentText {
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+
+      .paymentPending {
+        padding: 8px;
+      }
+    }
+
+    .paymentSuccess {
+      color: #33ff77;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4px;
+      gap: 12px;
+    }
+  }
+}
