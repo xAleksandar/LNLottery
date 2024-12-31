@@ -76,4 +76,22 @@ export class ApiService {
       console.error("Error creating deposit invoice:", error);
     }
   }
+
+  async createWithdrawalInvoice(amount: number, isManual: boolean) {
+    try {
+      const response = await api.post(
+        "/invoices/create-withdrawal-invoice",
+        { amount, isManual },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error creating withdrawal invoice:", error);
+    }
+  }
 }

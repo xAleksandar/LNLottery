@@ -17,7 +17,6 @@ export class AuthController {
   async login(@Req() request: Request, @Res() response: Response) {
     const user = request.user as User;
     const tokens = await this.authService.generateInitialTokens(user);
-
     response.cookie(TokensTypeEnum.AccessToken, tokens.accessToken, {
       maxAge: Number(process.env.ACCESS_TOKEN_EXPIRY),
       httpOnly: true,
@@ -55,7 +54,10 @@ export class AuthController {
 
   @Get(authPaths.status)
   @UseGuards(JwtAuthGuard)
-  status(@Res() response: Response) {
-    return response.status(200).json({ message: Messages.commonTokenActive() });
+  status(@Req() request: Request, @Res() response: Response) {
+    const user = request.user as User;
+    return response
+      .status(200)
+      .json({ id: user.id, message: Messages.commonTokenActive() });
   }
 }

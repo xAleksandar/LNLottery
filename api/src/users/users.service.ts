@@ -62,4 +62,9 @@ export class UsersService {
     }
     return user;
   }
+
+  async getUserBalance(userId: string): Promise<number> {
+    const user = await this.getUserById(userId);
+    return user.balance;
+  }
 }

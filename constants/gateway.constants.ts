@@ -1,5 +1,6 @@
 export const GatewayEvents = {
-  Connection: "connection",
+  Connect: "connect",
   Subscribe: "subscribe",
   BalanceUpdate: "balanceUpdate",
+  paymentConfirmed: "paymentConfirmed",
 };

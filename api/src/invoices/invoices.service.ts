@@ -14,6 +14,7 @@ import { invoiceRoutes } from 'src/routes/invoices.routes';
 import { getInvoiceDate } from 'src/helpers/date.helpers';
 import { Withdrawal } from 'src/models/Withdrawal.model';
 import { PaymentStatus } from 'src/enums/payments.enum';
+import { AppGateway } from '../app.gateway';
 import { User } from '../models/User.model';
 
 @Injectable()
@@ -21,9 +22,10 @@ export class InvoicesService {
   constructor(
     @InjectModel(MongoModels.Deposit)
     private readonly depositModel: Model<Deposit>,
-    @InjectModel(MongoModels.User) private readonly userModel: Model<User>,
     @InjectModel(MongoModels.Withdrawal)
     private readonly withdrawalModel: Model<Withdrawal>,
+    @InjectModel(MongoModels.User) private readonly userModel: Model<User>,
+    private readonly appGateway: AppGateway,
   ) {}
 
   async createDepositInvoice(user: User, amount: number) {
@@ -96,7 +98,7 @@ export class InvoicesService {
 
     await withdrawal.save();
 
-    return request;
+    return { ...request, payment_hash: withdrawal.id };
   }
 
   async setPaid(invoiceId: string) {
@@ -122,6 +124,11 @@ export class InvoicesService {
 
     action.status = PaymentStatus.COMPLETED;
     const result = await action.save();
+    this.appGateway.emitInvoicePaymentConfirmed(
+      user.id,
+      deposit ? (action as any).payment_hash : action.id,
+    );
+    this.appGateway.emitNewBalanceUpdate(user.id, user.balance);
 
     return result;
   }

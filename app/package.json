@@ -22,6 +22,7 @@
     "next": "15.0.3",
     "next-qrcode": "^2.5.1",
     "react": "19.0.0-rc-66855b96-20241106",
+    "react-casino-roulette": "file:../../react-casino-roulette",
     "react-checkmark": "^2.1.1",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-loader-spinner": "^6.1.6",

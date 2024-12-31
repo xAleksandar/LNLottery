@@ -2,7 +2,10 @@
 import { useState, useEffect } from "react";
 import useAuthStore from "./lib/store/auth.store";
 import useAppStore from "./lib/store/app.store";
-import { initializeWS } from "./lib/webSockets/webSockets";
+import {
+  initializeWS,
+  setupWebSocketListeners,
+} from "./lib/webSockets/webSockets";
 import { UI_ROUTES } from "./lib/routes";
 import { FundsManager } from "./components";
 import Link from "next/link";
@@ -27,6 +30,7 @@ export default function Home() {
   useEffect(() => {
     if (userId) {
       initializeWS(userId);
+      setupWebSocketListeners();
     }
   }, [userId]);
 

@@ -4,6 +4,7 @@ import styles from "./FundsManager.module.css";
 import { useQRCode } from "next-qrcode";
 import { ApiService } from "../../lib/api/api";
 import { onPaymentReceived } from "@/app/lib/webSockets/webSockets";
+import useUserStore from "../../lib/store/user.store";
 import CircularProgress from "@mui/material/CircularProgress";
 import AnimatedCheckmark from "./AnimatedCheckmark";
 
@@ -15,9 +16,14 @@ const FundsManager = () => {
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
 
   const { Canvas } = useQRCode();
+  const { balance } = useUserStore();
 
   const onDepositSelected = () => {
     setSelectedOption(1);
+  };
+
+  const onWithdrawSelected = () => {
+    setSelectedOption(2);
   };
 
   const onPaymentConfirmed = () => {
@@ -36,6 +42,13 @@ const FundsManager = () => {
     onPaymentReceived(response.payment_hash, onPaymentConfirmed);
   };
 
+  const handleWithdrawal = async () => {
+    const response = await apiService.createWithdrawalInvoice(amount, false);
+    console.warn(response);
+    setInvoice(response.lnurl);
+    onPaymentReceived(response.payment_hash, onPaymentConfirmed);
+  };
+
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(e.target.value));
   };
@@ -43,8 +56,9 @@ const FundsManager = () => {
   return (
     <div className={styles.wrapper}>
       <h1>Funds Manager</h1>
-      <p>Manage your funds here</p>
+      <p>Manage your funds here {balance}</p>
       <button onClick={onDepositSelected}>Deposit</button>
+      <button onClick={onWithdrawSelected}>Withdraw</button>
       {selectedOption !== 0 && (
         <div className={styles.wrapperModal}>
           <div className={styles.content}>
@@ -55,7 +69,12 @@ const FundsManager = () => {
                   type="text"
                   placeholder="Enter amount"
                 />
-                <button className={styles.submit} onClick={handleDeposit}>
+                <button
+                  className={styles.submit}
+                  onClick={
+                    selectedOption === 1 ? handleDeposit : handleWithdrawal
+                  }
+                >
                   {selectedOption === 1 ? "Deposit" : "Withdraw"}
                 </button>
               </>
@@ -72,12 +91,16 @@ const FundsManager = () => {
                 <div className={styles.paymentText}>
                   {isPaymentConfirmed ? (
                     <div className={styles.paymentSuccess}>
-                      Payment confirmed
+                      {selectedOption === 1
+                        ? "Payment Confirmed."
+                        : "Payment Sent."}
                       <AnimatedCheckmark />
                     </div>
                   ) : (
                     <div className={styles.paymentPending}>
-                      Awaiting confirmation..
+                      {selectedOption === 1
+                        ? "Awaiting confirmation.."
+                        : "Scan QR code to withdraw.."}
                       <CircularProgress
                         size={22}
                         style={{ color: "white", marginLeft: "8px" }}
