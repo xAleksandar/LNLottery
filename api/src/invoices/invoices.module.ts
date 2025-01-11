@@ -6,7 +6,7 @@ import { UserSchema } from '../models/User.model';
 import { MongoModels } from '../models/models.enum';
 import { DepositSchema } from '../models/Deposit.model';
 import { WithdrawalSchema } from 'src/models/Withdrawal.model';
-import { AppGateway } from 'src/app.gateway';
+import { GatewayModule } from 'src/gateway/gateway.module';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
@@ -17,8 +17,9 @@ import { UsersModule } from 'src/users/users.module';
       { name: MongoModels.Withdrawal, schema: WithdrawalSchema },
     ]),
     UsersModule,
+    GatewayModule,
   ],
   controllers: [InvoicesController],
-  providers: [InvoicesService, AppGateway],
+  providers: [InvoicesService],
 })
 export class InvoicesModule {}

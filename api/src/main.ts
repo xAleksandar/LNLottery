@@ -10,7 +10,11 @@ async function bootstrap() {
   app.use(new RefreshTokenMiddleware().use);
 
   app.enableCors({
-    origin: 'http://localhost:3000', // @@ Replace with your domain
+    origin: [
+      'http://localhost:3000',
+      'http://10.0.0.100:3000',
+      'http://0.0.0.0:3000',
+    ], // @@ Replace with your domain
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],

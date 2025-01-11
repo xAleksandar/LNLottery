@@ -7,7 +7,6 @@ import { UsersModule } from './users/users.module';
 import { MongoModels } from './models/models.enum';
 import { UserSchema } from './models/User.model';
 import { AuthModule } from './auth/auth.module';
-import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
@@ -18,6 +17,6 @@ import { AppGateway } from './app.gateway';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AppGateway],
+  providers: [AppService],
 })
 export class AppModule {}
