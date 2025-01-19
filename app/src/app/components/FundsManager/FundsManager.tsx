@@ -1,22 +1,45 @@
 "use client";
-import { useState } from "react";
-import styles from "./FundsManager.module.css";
+import { useState, useEffect } from "react";
+import classNames from "classnames";
 import { useQRCode } from "next-qrcode";
 import { ApiService } from "../../lib/api/api";
+import { InputField } from "../";
 import { onPaymentReceived } from "@/app/lib/webSockets/webSockets";
-import useUserStore from "../../lib/store/user.store";
 import CircularProgress from "@mui/material/CircularProgress";
 import AnimatedCheckmark from "./AnimatedCheckmark";
 
-const FundsManager = () => {
+import styles from "./FundsManager.module.scss";
+
+type Props = {
+  balance: number;
+};
+
+const FundsManager = (props: Props) => {
+  const { balance } = props;
   const apiService = new ApiService();
   const [invoice, setInvoice] = useState("");
+  const [previousBalance, setPreviousBalance] = useState(0);
+  const [showBalance, setShowBalance] = useState("");
   const [selectedOption, setSelectedOption] = useState(0);
   const [amount, setAmount] = useState(0);
+  const [error, setError] = useState("");
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
 
   const { Canvas } = useQRCode();
-  const { balance } = useUserStore();
+
+  useEffect(() => {
+    if (balance !== previousBalance && previousBalance !== 0) {
+      setShowBalance(
+        balance > previousBalance
+          ? `+${balance - previousBalance} sats`
+          : `-${previousBalance - balance} sats`
+      );
+      setTimeout(() => {
+        setShowBalance("");
+      }, 2000);
+    }
+    setPreviousBalance(balance);
+  }, [balance]);
 
   const onDepositSelected = () => {
     setSelectedOption(1);
@@ -30,6 +53,7 @@ const FundsManager = () => {
     setIsPaymentConfirmed(true);
     setAmount(0);
     setTimeout(() => {
+      setSelectedOption(0);
       setInvoice("");
       setIsPaymentConfirmed(false);
     }, 2000);
@@ -53,21 +77,44 @@ const FundsManager = () => {
     setAmount(Number(e.target.value));
   };
 
+  const onClose = () => {
+    setSelectedOption(0);
+    setAmount(0);
+    setError("");
+    setInvoice("");
+  };
+
   return (
     <div className={styles.wrapper}>
-      <h1>Funds Manager</h1>
-      <p>Manage your funds here {balance}</p>
-      <button onClick={onDepositSelected}>Deposit</button>
-      <button onClick={onWithdrawSelected}>Withdraw</button>
+      <button className={styles.button} onClick={onDepositSelected}>
+        Deposit
+      </button>
+      <p className={styles.balanceWrapper}>
+        Balance:&nbsp;
+        <span
+          className={classNames(styles.balance, {
+            [styles.positiveChange]: showBalance && showBalance.startsWith("+"),
+            [styles.negativeChange]: showBalance && showBalance.startsWith("-"),
+          })}
+        >
+          {balance}
+          &nbsp;{showBalance}
+        </span>
+      </p>
+      <button className={styles.button} onClick={onWithdrawSelected}>
+        Withdraw
+      </button>
       {selectedOption !== 0 && (
         <div className={styles.wrapperModal}>
           <div className={styles.content}>
             {invoice.length === 0 ? (
               <>
-                <input
+                <InputField
+                  fullWidth
+                  label="Enter amount"
+                  value={amount.toString()}
                   onChange={handleAmountChange}
-                  type="text"
-                  placeholder="Enter amount"
+                  error={error}
                 />
                 <button
                   className={styles.submit}
@@ -110,10 +157,7 @@ const FundsManager = () => {
                 </div>
               </>
             )}
-            <button
-              className={styles.submit}
-              onClick={() => setSelectedOption(0)}
-            >
+            <button className={styles.submit} onClick={onClose}>
               Close
             </button>
           </div>

@@ -1,5 +1,30 @@
+@use "../../styles/Mixins.scss";
+
 .wrapper {
+  @include Mixins.Container;
   color: white;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+
+  .balanceWrapper {
+    min-width: 160px;
+    text-align: center;
+
+    .negativeChange {
+      color: #ff4d4d;
+    }
+
+    .positiveChange {
+      color: #33ff77;
+    }
+  }
+
+  .button {
+    @include Mixins.PrimaryButton;
+    width: 120px;
+  }
 }
 
 .wrapperModal {
@@ -14,12 +39,14 @@
   justify-content: center;
   justify-content: center; /* Center horizontally */
   align-items: flex-start; /* Align to the top */
+  z-index: 1000;
 
   .content {
     padding: 20px;
     background-color: #3bb0ff1a;
     border: 1px solid #3bb0ff26;
     border-radius: 16px;
+    max-width: 266px;
 
     .submit {
       width: 100%;

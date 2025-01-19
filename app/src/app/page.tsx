@@ -1,22 +1,30 @@
 "use client";
 import { useState, useEffect } from "react";
-import useAuthStore from "./lib/store/auth.store";
 import useAppStore from "./lib/store/app.store";
+import useAuthStore from "./lib/store/auth.store";
+import useUserStore from "./lib/store/user.store";
 import {
   initializeWS,
   setupWebSocketListeners,
 } from "./lib/webSockets/webSockets";
-import { UI_ROUTES } from "./lib/routes";
-import { FundsManager } from "./components";
-import Link from "next/link";
+import { FundsManager, BetTable, Login } from "./components";
 
-import styles from "./page.module.css";
+import styles from "./page.module.scss";
 
 export default function Home() {
   const { isLoggedIn, checkAuth } = useAuthStore();
   const { checkInitialState, isAppLoading } = useAppStore();
+  const { balance } = useUserStore();
 
   const [userId, setUserId] = useState<string | null>(null);
+  const [stateBalance, setStateBalance] = useState(balance);
+
+  useEffect(() => {
+    if (stateBalance === 0) {
+      console.log("$$update initial");
+      setStateBalance(balance);
+    }
+  }, [balance]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,19 +42,18 @@ export default function Home() {
     }
   }, [userId]);
 
+  const updateBalance = () => {
+    console.log("$$Update balance");
+    setStateBalance(balance);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.content}>
-        <div className={styles.loadingText}>
-          {isLoggedIn ? "Logged in" : "Please log in"}
-        </div>
-        {!isLoggedIn && (
-          <Link href={UI_ROUTES.login}>
-            <button className={styles.button}>Log in</button>
-          </Link>
-        )}
-        {isLoggedIn && <FundsManager />}
+        <FundsManager balance={stateBalance} />
+        <BetTable balance={stateBalance} updateBalance={updateBalance} />
       </div>
+      <div className={styles.content}>{!isLoggedIn && <Login />}</div>
     </div>
   );
 }

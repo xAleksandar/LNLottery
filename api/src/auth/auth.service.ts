@@ -55,4 +55,15 @@ export class AuthService {
     const tokens = await this.generateInitialTokens(user);
     return tokens;
   }
+
+  async verifyEmail(id: string) {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      return false;
+    }
+
+    user.isEmailVerified = true;
+    await user.save();
+    return true;
+  }
 }

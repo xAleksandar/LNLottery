@@ -7,6 +7,9 @@ import { UsersModule } from './users/users.module';
 import { MongoModels } from './models/models.enum';
 import { UserSchema } from './models/User.model';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { VerifyEmailGuard } from './auth/guards/VerifyEmailGuard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -14,9 +17,16 @@ import { AuthModule } from './auth/auth.module';
     InvoicesModule,
     MongooseModule.forRoot(process.env.MONGO_URL),
     MongooseModule.forFeature([{ name: MongoModels.User, schema: UserSchema }]),
+    JwtModule.register({ secret: process.env.JWT_SECRET }),
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: VerifyEmailGuard,
+    },
+  ],
 })
 export class AppModule {}

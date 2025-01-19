@@ -14,4 +14,5 @@ export const Messages = {
   commonLoginSuccess: () => "Login successful",
   commonLogoutSuccess: () => "Logout successful",
   commonTokenActive: () => "Token is active",
+  commonWelcomeToGateway: () => "Welcome to LN Gateway",
 };

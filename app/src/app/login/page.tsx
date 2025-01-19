@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import Link from "next/link";
 import { ApiService } from "../lib/api/api";
 import { ApiStatus } from "../lib/api/status";
-import { InputField } from "../components";
+import { InputField, RegisterLine } from "../components";
 import { lang } from "../lang/en";
 import validator from "validator";
 import styles from "./page.module.css";
@@ -93,17 +92,7 @@ const Login = () => {
             {lang.commonLogin()}
           </button>
         </Box>
-        <div className={styles.midline}>
-          <div className={styles.line} />
-          <div className={styles.text}>{lang.commonOr()}</div>
-          <div className={styles.line} />
-        </div>
-        <div className={styles.register}>
-          {lang.commonNoAccount()} &nbsp;
-          <Link className={styles.registerLink} href="/register">
-            {lang.commonRegister()}
-          </Link>
-        </div>
+        <RegisterLine />
       </div>
     </div>
   );

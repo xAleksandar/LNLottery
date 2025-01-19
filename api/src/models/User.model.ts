@@ -6,6 +6,7 @@ export const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   created_at: { type: Date, default: Date.now },
   balance: { type: Number, default: 0 },
+  isEmailVerified: { type: Boolean, default: false },
 });
 
 export interface User {
@@ -15,4 +16,5 @@ export interface User {
   password: string;
   created_at: Date;
   balance: number;
+  isEmailVerified: boolean;
 }

@@ -6,4 +6,5 @@ export const authPaths = {
   logout: 'logout',
   status: 'status',
   refreshToken: 'refresh-token',
+  verifyEmail: 'verify-email',
 };

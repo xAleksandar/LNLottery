@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  Body,
+} from '@nestjs/common';
 import { TokensTypeEnum } from 'src/enums/tokens.enum';
 import { LocalGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
@@ -50,6 +58,12 @@ export class AuthController {
     return response
       .status(200)
       .json({ message: Messages.commonLogoutSuccess() });
+  }
+
+  @Post(authPaths.verifyEmail)
+  @UseGuards(JwtAuthGuard)
+  async verifyEmail(@Body('id') id: string) {
+    return await this.authService.verifyEmail(id);
   }
 
   @Get(authPaths.status)

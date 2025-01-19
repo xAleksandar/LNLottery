@@ -7,6 +7,7 @@ import { Messages } from '../../../constants/messages';
 import { MONGO_ID_LENGTH } from 'src/constants';
 import { MongoModels } from 'src/models/models.enum';
 import { encryptPassword } from 'src/helpers/password.helpers';
+import { sendMail } from 'src/services/Mailer';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +40,8 @@ export class UsersService {
     });
 
     const result = await newUser.save();
+    sendMail({ to: email, token: result.id });
+
     return result.id as string;
   }
 

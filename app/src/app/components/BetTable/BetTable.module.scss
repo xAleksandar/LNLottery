@@ -1,0 +1,40 @@
+@use "../../styles/Mixins.scss";
+
+.wrapperSmallScreen {
+  display: flex;
+  gap: 20px;
+}
+
+.firstSection {
+  @include Mixins.Container;
+
+  .buttonsWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 8px;
+
+    .spinButton {
+      @include Mixins.PrimaryButton;
+      height: 48px;
+    }
+
+    .clearButton {
+      @include Mixins.SecondaryButton;
+      height: 48px;
+
+      &:disabled {
+        background-color: rgba(59, 176, 255, 0.05);
+        cursor: auto;
+      }
+    }
+  }
+}
+
+.secondSection {
+  @include Mixins.Container;
+}
+
+.balance {
+  color: white;
+}

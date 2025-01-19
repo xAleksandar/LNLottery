@@ -6,6 +6,7 @@ type Props = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string;
+  fullWidth?: boolean;
   isPassword?: boolean;
   showPassword?: boolean;
   onTogglePasswordVisibility?: () => void;
@@ -16,6 +17,7 @@ const InputField = (props: Props) => {
     label,
     value,
     error,
+    fullWidth = false,
     isPassword = false,
     showPassword = false,
     onChange,
@@ -25,6 +27,7 @@ const InputField = (props: Props) => {
     <TextField
       label={label}
       value={value}
+      fullWidth={fullWidth}
       error={error !== ""}
       helperText={error}
       type={!isPassword || showPassword ? "text" : "password"}

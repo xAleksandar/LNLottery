@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import useUserStore from "./user.store";
 
 type AppState = {
   isAppLoading: boolean;
@@ -15,6 +16,11 @@ const useAppStore = create<AppState>((set) => ({
     checkAuth: () => Promise<string | null>
   ): Promise<string | null> => {
     const result = await checkAuth();
+
+    // Update userId in user store
+    const setUserId = useUserStore.getState().setUserId;
+    setUserId(result || "");
+
     set({
       isAppLoading: false,
     });

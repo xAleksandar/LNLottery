@@ -1,0 +1,29 @@
+@use "./Variables";
+
+@mixin Container {
+  padding: Variables.$common-padding-primary;
+  background-color: Variables.$common-background-color;
+  border: 1px solid Variables.$common-border-color-primary;
+  border-radius: Variables.$common-border-radius;
+}
+
+@mixin CommonButton {
+  padding: 0px 10px;
+  font-size: 16px;
+  border-radius: Variables.$common-border-radius;
+}
+
+@mixin PrimaryButton {
+  @include CommonButton;
+  background-color: Variables.$background-cyan-primary;
+  color: black;
+  cursor: pointer;
+}
+
+@mixin SecondaryButton {
+  @include CommonButton;
+  border: 1px solid Variables.$background-cyan-primary;
+  background-color: rgba(59, 176, 255, 0.15);
+  color: white;
+  cursor: pointer;
+}
