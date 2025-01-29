@@ -6,7 +6,7 @@ import { Messages } from "../../../../../constants/messages";
 axios.defaults.withCredentials = true;
 
 const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3210",
+  baseURL: "http://localhost:3210/api",
 });
 
 export class ApiService {
@@ -54,6 +54,10 @@ export class ApiService {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        if (error.response?.data.message === "Email not verified") {
+          return ApiStatus.EmailNotVerified;
+        }
         return null;
       }
     }
@@ -92,6 +96,37 @@ export class ApiService {
       return response.data;
     } catch (error) {
       console.error("Error creating withdrawal invoice:", error);
+    }
+  }
+
+  async verifyEmail(userId: string): Promise<boolean> {
+    try {
+      const response = await api.post("/auth/verify-email", {
+        id: userId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      return false;
+    }
+  }
+
+  async resendEmail(): Promise<boolean> {
+    try {
+      const response = await api.post("/auth/resend-verification-email");
+      return response.data;
+    } catch (error) {
+      console.error("Error resending email:", error);
+      return false;
+    }
+  }
+
+  async logout() {
+    try {
+      const response = await api.post("/auth/logout");
+      return response.data;
+    } catch (error) {
+      console.error("Error logging out:", error);
     }
   }
 }

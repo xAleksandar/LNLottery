@@ -22,10 +22,10 @@ const Register = () => {
       email,
       password: authIdentifier,
     });
-    console.log("$tat: ", response);
+
     setStatus(response);
 
-    if (response === ApiStatus.Created) {
+    if (response === ApiStatus.Success) {
       setTimeout(() => {
         window.location.href = "/";
       }, 2000);
@@ -92,7 +92,7 @@ const Register = () => {
               {status === ApiStatus.ExistingUser && (
                 <p className={styles.errorText}>User already exists</p>
               )}
-              {status === ApiStatus.Created && (
+              {status === ApiStatus.Success && (
                 <p className={styles.success}>
                   Enroll successful. Redirecting...
                 </p>

@@ -2,11 +2,9 @@ import { io } from "socket.io-client";
 import useUserStore from "../store/user.store";
 import { GatewayEvents } from "../../../../../constants/gateway.constants";
 import { BetDataItem } from "../../../../../types/bets";
+import { AvailableNumbers } from "react-casino-roulette";
 
 export const socket = io("http://localhost:3210");
-
-console.log("Websockets.ts");
-console.log(1);
 
 export const initializeWS = (userId: string) => {
   console.log("Initializing WS");
@@ -34,8 +32,8 @@ export const onPaymentReceived = (id: string, callback: () => void) => {
   });
 };
 
-export const onBetResolved = (callback: (number: number) => void) => {
-  socket.on(GatewayEvents.newBetResolved, (number: number) => {
+export const onBetResolved = (callback: (number: AvailableNumbers) => void) => {
+  socket.on(GatewayEvents.newBetResolved, (number: AvailableNumbers) => {
     callback(number);
   });
 };

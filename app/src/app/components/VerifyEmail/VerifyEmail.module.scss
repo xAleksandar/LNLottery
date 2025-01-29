@@ -1,0 +1,33 @@
+.modalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  padding: 20px;
+  background-color: #151e64;
+  border: 1px solid #3bb0ff26;
+  border-radius: 16px;
+  width: 90%;
+  text-align: center;
+  max-width: 410px;
+
+  h2 {
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  p {
+    // margin-bottom: 0.5rem;
+    color: #cbd5e0;
+  }
+}

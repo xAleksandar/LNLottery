@@ -1,27 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
-import useAppStore from "./lib/store/app.store";
-import useAuthStore from "./lib/store/auth.store";
-import useUserStore from "./lib/store/user.store";
+import useAppStore from "../lib/store/app.store";
+import useAuthStore from "../lib/store/auth.store";
+import useUserStore from "../lib/store/user.store";
 import {
   initializeWS,
   setupWebSocketListeners,
-} from "./lib/webSockets/webSockets";
+} from "../lib/webSockets/webSockets";
 import {
   FundsManager,
+  BetTable,
   Login,
   VerifyEmail,
   LogoutButton,
-  BetTable,
-} from "./components";
+} from "./index";
 
-import styles from "./page.module.scss";
+import styles from "../page.module.scss";
 
-export default function Home() {
+const HomeContent = () => {
   const { isLoggedIn, isEmailVerified, checkAuth } = useAuthStore();
   const { checkInitialState } = useAppStore();
   const { balance } = useUserStore();
-
   const [userId, setUserId] = useState<string | null>(null);
   const [stateBalance, setStateBalance] = useState(balance);
 
@@ -34,7 +33,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       const id = await checkInitialState(checkAuth);
-      setUserId(id); // Store the resolved userId
+      setUserId(id);
     };
 
     fetchData();
@@ -48,6 +47,7 @@ export default function Home() {
   }, [userId]);
 
   const updateBalance = () => {
+    console.log("$$Update balance");
     setStateBalance(balance);
   };
 
@@ -63,4 +63,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default HomeContent;

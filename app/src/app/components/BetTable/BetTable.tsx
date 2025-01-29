@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import classNames from "classnames";
 import {
   RouletteTable,
@@ -8,6 +8,7 @@ import {
   ChipList,
   AvailableNumbers,
 } from "react-casino-roulette";
+
 import { onBetPlaced, onBetResolved } from "@/app/lib/webSockets/webSockets";
 import { chips } from "./assets/chips";
 
@@ -27,9 +28,13 @@ const BetTable = (props: Props) => {
   const [winningBet, setWinningBet] = useState<"-1" | AvailableNumbers>("-1");
   const [selectedChip, setSelectedChip] = useState(Object.keys(chips)[0]);
   const { bets, onBet, clearBets } = useRoulette();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const doSpin = () => {
-    console.warn("bets", bets);
     if (Object.keys(bets).length === 0) {
       alert("Place your bets before spinning!");
       return;
@@ -49,19 +54,19 @@ const BetTable = (props: Props) => {
 
     onBetPlaced(betsArray);
     onBetResolved((number) => {
-      setWinningBet(number as any);
+      setWinningBet(number);
       setWheelStart(true);
     });
   };
 
-  const handleEndSpin = (winner: string) => {
+  const handleEndSpin = () => {
     updateBalance();
     setWheelStart(false);
     clearBets();
     // alert(`The ball landed on ${winner}!`);
   };
 
-  return (
+  return isClient ? (
     <div
       className={classNames(styles.wrapper, {
         [styles.wrapperSmallScreen]: true,
@@ -102,7 +107,7 @@ const BetTable = (props: Props) => {
         />
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default BetTable;

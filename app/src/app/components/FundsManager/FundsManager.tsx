@@ -39,7 +39,7 @@ const FundsManager = (props: Props) => {
       }, 2000);
     }
     setPreviousBalance(balance);
-  }, [balance]);
+  }, [balance, previousBalance]);
 
   const onDepositSelected = () => {
     setSelectedOption(1);

@@ -3,3 +3,7 @@ export { default as FundsManager } from "./FundsManager/FundsManager";
 export { default as BetTable } from "./BetTable/BetTable";
 export { default as Login } from "./Login/Login";
 export { default as RegisterLine } from "./RegisterLine/RegisterLine";
+export { default as VerifyEmail } from "./VerifyEmail/VerifyEmail";
+export { default as ClickableImage } from "./Clickables/ClickableImage";
+export { default as LogoutButton } from "./LogoutButton/LogoutButton";
+export { default as HomeContent } from "./HomeContent";
